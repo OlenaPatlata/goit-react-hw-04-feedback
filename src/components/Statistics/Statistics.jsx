@@ -1,27 +1,27 @@
-import { Component } from 'react';
-// import s from './Statistics.module.css';
+import React from 'react';
 import Item from 'components/Item/Item';
 import Notification from 'components/Notification/Notification';
 import PropTypes from 'prop-types';
 
-class Statistics extends Component {
-  static propTypes = {
-    statisticArray: PropTypes.arrayOf(PropTypes.array.isRequired).isRequired,
-    total: PropTypes.number,
-  };
-  render() {
-    const { statisticArray, total } = this.props;
+const Statistics = ({ statisticArray, total }) => {
+  return (
+    <>
+      {total > 0 ? (
+        <ul>
+          {statisticArray.map(array => {
+            return <Item key={array[0]} array={array} />;
+          })}
+        </ul>
+      ) : (
+        <Notification message="There is no feedback" />
+      )}
+    </>
+  );
+};
 
-    return total > 0 ? (
-      <ul>
-        {statisticArray.map(array => {
-          return <Item key={array[0]} array={array} />;
-        })}
-      </ul>
-    ) : (
-      <Notification message="There is no feedback" />
-    );
-  }
-}
+Statistics.propTypes = {
+  statisticArray: PropTypes.arrayOf(PropTypes.array.isRequired).isRequired,
+  total: PropTypes.number,
+};
 
 export default Statistics;
