@@ -1,75 +1,86 @@
-import { useEffect, useState } from 'react';
+import { useReducer, useCallback } from 'react';
 import Buttons from 'components/Buttons/Buttons';
 import Statistics from 'components/Statistics/Statistics';
 import Title from 'components/Title/Title';
 import Section from 'components/Section/Section';
 
-// const initialState = {
-//   good: 5,
-//   neutral: 0,
-//   bad: 0,
-// };
-// const buttonReduser = (state, action) => {
-//   const { type, payload } = action;
-//   switch (type) {
-//     case 'good':
-//       return state.good + payload;
-//     case 'neutral':
-//       return state.neutral + payload;
-//     case 'bad':
-//       return state.bad + payload;
-//     case 'reset':
-//       return initialState;
-//     default:
-//       break;
-//   }
-// };
+const constantTypes = {
+  GOOD: 'good',
+  NEUTRAL: 'neutral',
+  BAD: 'bad',
+  TOTAL: 'total',
+  PERSCENTAGE: 'percentage',
+  RESET: 'reset',
+};
+
+const initialState = {
+  good: 0,
+  neutral: 0,
+  bad: 0,
+};
+
+const reducer = (state, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case constantTypes.GOOD:
+      return { ...state, good: state.good + payload };
+    case constantTypes.NEUTRAL:
+      return { ...state, neutral: state.neutral + payload };
+    case constantTypes.BAD:
+      return { ...state, bad: state.bad + payload };
+    case constantTypes.RESET:
+      return initialState;
+    default:
+      return state;
+  }
+};
 
 const Counter = () => {
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [percentage, setPercentage] = useState(0);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleIncrement = e => {
-    setTotal(prev => prev + 1);
-    if (e.target.name === 'good') {
-      setGood(prev => prev + 1);
-    } else if (e.target.name === 'neutral') {
-      setNeutral(prev => prev + 1);
-    } else if (e.target.name === 'bad') {
-      setBad(prev => prev + 1);
+    if (e.target.name === constantTypes.GOOD) {
+      dispatch({ type: constantTypes.GOOD, payload: 1 });
+    } else if (e.target.name === constantTypes.NEUTRAL) {
+      dispatch({ type: constantTypes.NEUTRAL, payload: 1 });
+    } else if (e.target.name === constantTypes.BAD) {
+      dispatch({
+        type: constantTypes.BAD,
+        payload: 1,
+      });
     }
   };
+  const total = useCallback(() => {
+    const totalFeedback = state.good + state.neutral + state.bad;
+    return totalFeedback;
+  }, [state.good, state.neutral, state.bad]);
 
-  useEffect(() => {
-    if (good === 0) {
-      return;
+  const percentage = useCallback(() => {
+    if (state.good === 0) {
+      const percentageFeedback = 0;
+      return percentageFeedback;
     }
-    setPercentage(((good / total) * 100).toFixed(0));
-  }, [good, total]);
+    const percentageFeedback = (
+      (state.good / (state.good + state.neutral + state.bad)) *
+      100
+    ).toFixed(0);
+    return percentageFeedback;
+  }, [state.good, state.neutral, state.bad]);
 
   return (
     <>
       <Section>
         <Title title="Please leave feedback" />
-        <Buttons
-          names={['good', 'neutral', 'bad']}
-          onIncrement={handleIncrement}
-        />
+        <Buttons names={Object.keys(state)} onIncrement={handleIncrement} />
       </Section>
       <Section>
         <Title title="Statistics" />
         <Statistics
           statisticArray={[
-            ['good', good],
-            ['neutral', neutral],
-            ['bad', bad],
-            ['total', total],
-            ['positive', percentage],
+            ...Object.entries(state),
+            ['total', total()],
+            ['positive', percentage()],
           ]}
-          total={total}
         />
       </Section>
     </>
