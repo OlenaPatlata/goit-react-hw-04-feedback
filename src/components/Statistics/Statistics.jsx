@@ -3,10 +3,10 @@ import Item from 'components/Item/Item';
 import Notification from 'components/Notification/Notification';
 import PropTypes from 'prop-types';
 
-const Statistics = ({ statisticArray }) => {
+const Statistics = ({ statisticArray, total }) => {
   return (
     <>
-      {statisticArray[3][1] > 0 ? (
+      {total > 0 ? (
         <ul>
           {statisticArray.map(array => {
             return <Item key={array[0]} array={array} />;

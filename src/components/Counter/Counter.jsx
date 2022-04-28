@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react';
+import { useReducer } from 'react';
 import Buttons from 'components/Buttons/Buttons';
 import Statistics from 'components/Statistics/Statistics';
 import Title from 'components/Title/Title';
@@ -51,14 +51,21 @@ const Counter = () => {
     }
   };
 
-  const total = state.good + state.neutral + state.bad;
+  const totalCount = () => {
+    return state.good + state.neutral + state.bad;
+  };
+  const total = totalCount();
 
-  const percentage =
-    state.good === 0
-      ? 0
-      : ((state.good / (state.good + state.neutral + state.bad)) * 100).toFixed(
-          0
-        );
+  const percentageCount = () => {
+    if (state.good === 0) {
+      return 0;
+    }
+    return (
+      (state.good / (state.good + state.neutral + state.bad)) *
+      100
+    ).toFixed(0);
+  };
+  const percentage = percentageCount();
 
   // const total = useCallback(() => {
   //   const totalFeedback = state.good + state.neutral + state.bad;
@@ -91,6 +98,7 @@ const Counter = () => {
             ['total', total],
             ['positive', percentage],
           ]}
+          total={total}
         />
       </Section>
     </>
