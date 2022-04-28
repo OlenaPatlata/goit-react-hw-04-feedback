@@ -50,22 +50,32 @@ const Counter = () => {
       });
     }
   };
-  const total = useCallback(() => {
-    const totalFeedback = state.good + state.neutral + state.bad;
-    return totalFeedback;
-  }, [state.good, state.neutral, state.bad]);
 
-  const percentage = useCallback(() => {
-    if (state.good === 0) {
-      const percentageFeedback = 0;
-      return percentageFeedback;
-    }
-    const percentageFeedback = (
-      (state.good / (state.good + state.neutral + state.bad)) *
-      100
-    ).toFixed(0);
-    return percentageFeedback;
-  }, [state.good, state.neutral, state.bad]);
+  const total = state.good + state.neutral + state.bad;
+
+  const percentage =
+    state.good === 0
+      ? 0
+      : ((state.good / (state.good + state.neutral + state.bad)) * 100).toFixed(
+          0
+        );
+
+  // const total = useCallback(() => {
+  //   const totalFeedback = state.good + state.neutral + state.bad;
+  //   return totalFeedback;
+  // }, [state]);
+
+  // const percentage = useCallback(() => {
+  //   if (state.good === 0) {
+  //     const percentageFeedback = 0;
+  //     return percentageFeedback;
+  //   }
+  //   const percentageFeedback = (
+  //     (state.good / (state.good + state.neutral + state.bad)) *
+  //     100
+  //   ).toFixed(0);
+  //   return percentageFeedback;
+  // }, [state]);
 
   return (
     <>
@@ -78,8 +88,8 @@ const Counter = () => {
         <Statistics
           statisticArray={[
             ...Object.entries(state),
-            ['total', total()],
-            ['positive', percentage()],
+            ['total', total],
+            ['positive', percentage],
           ]}
         />
       </Section>
